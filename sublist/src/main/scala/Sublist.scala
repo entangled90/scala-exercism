@@ -25,8 +25,7 @@ object Sublist {
         override def unary_- = Unequal
     }
 
-
-    def sublist[A](first: List[A], second: List[A]): Comparison = sublistByRecursion(first,second)
+    def sublist[A](first: List[A], second: List[A]): Comparison = sublistByRecursion(first, second)
 
     def sublistByRecursion[A](first: List[A], second: List[A]): Comparison = {
 
@@ -69,7 +68,7 @@ object Sublist {
 
         isSublist(first, second) match {
             case Unequal =>
-                -isSublist(second, first)
+                - isSublist(second, first)
             case other =>
                 other
         }
