@@ -5,15 +5,12 @@ import scala.annotation.tailrec
   */
 object Sublist {
 
-
-    case object MinusOnEquals extends Exception
-
     sealed trait Comparison {
         def unary_- : Comparison
     }
 
     case object Equal extends Comparison {
-        override def unary_- = throw MinusOnEquals
+        override def unary_- = Unequal
     }
 
     case object Superlist extends Comparison {
@@ -29,44 +26,54 @@ object Sublist {
     }
 
 
-    def sublist[A](first: List[A], second: List[A]): Comparison = {
+    def sublist[A](first: List[A], second: List[A]): Comparison = sublistByRecursion(first,second)
 
-        def isSublist(listToSearch: List[A], targetList: List[A], remainingElementsToMatch: List[A],
-                      originalTargetList: List[A], originalListToSearch : List[A]): Comparison = {
+    def sublistByRecursion[A](first: List[A], second: List[A]): Comparison = {
 
-            (listToSearch, remainingElementsToMatch) match {
-                case (h1 :: t1, h2 :: t2) if h1 == h2 =>
-                    isSublist(t1, targetList, t2, originalTargetList,originalListToSearch)
+        def isSublist(f: List[A], s: List[A]) = {
+            @tailrec
+            def isSublistImp(listToSearch: List[A],
+                             targetList: List[A],
+                             remainingElementsToMatch: List[A]): Comparison = {
 
-                //Means
-                // [1,2] in [1,2,3]
-                case (Nil, h :: t) =>
-                    println("Sublist by nil")
-                    Sublist
+                (listToSearch, remainingElementsToMatch) match {
+                    case (h1 :: t1, h2 :: t2) if h1 == h2 =>
+                        isSublistImp(t1,
+                            targetList,
+                            t2)
 
-                //Could be equals or
-                // [1 ,2 ] in [3,1,2]
-                case (Nil, Nil) =>
-                    if (targetList == originalTargetList) Equal else Sublist
+                    //Means
+                    // [1,2] in [1,2,3]
+                    case (Nil, h :: t) =>
+                        Sublist
 
-                case (_, _) =>
-                    if (targetList.nonEmpty)
-                        isSublist(originalListToSearch, targetList.tail, targetList.tail, originalTargetList,originalListToSearch)
-                    else
-                        Unequal
+                    //Could be equals or
+                    // [1 ,2 ] in [3,1,2]
+                    case (Nil, Nil) =>
+                        if (targetList == s) Equal else Sublist
+
+                    case (_, _) =>
+                        if (targetList.nonEmpty)
+                            isSublistImp(f,
+                                targetList.tail,
+                                targetList.tail)
+                        else
+                            Unequal
+
+                }
 
             }
 
+            isSublistImp(f, s, s)
         }
-            isSublist(first, second, second, second,first) match {
-                case Unequal =>
-                    println("Reverse")
-                    -isSublist(second, first, first, first,second)
-                case other =>
-                    other
-            }
+
+        isSublist(first, second) match {
+            case Unequal =>
+                -isSublist(second, first)
+            case other =>
+                other
+        }
 
     }
-
 
 }
