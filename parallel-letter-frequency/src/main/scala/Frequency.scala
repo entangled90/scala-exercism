@@ -5,7 +5,7 @@ object Frequency {
 
 
 
-    // Bad "way" to convert an integer < 10 to a char 
+    // Bad "way" to convert an integer < 10 to a char
     val numbers: Set[Char] = (0 to 9).map(x => ( x + '0').toChar).toSet[Char]
     val invalidChars: Set[Char] = Set(',','.',';',':',' ') ++ numbers
 
