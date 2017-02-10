@@ -48,14 +48,11 @@ object RunLengthEncoding {
         str.foldLeft(DecodeMatchers.empty){
             case (d@DecodeMatchers(n, acc), current) =>
                 //IMPORTANT TO TELL THIS TO PEOPLE!
-                println(s"matchers are $d, current is $current")
                 current.asDigit match {
                     case parsed if parsed < 10 && parsed > -1  =>
-                        println("Success")
                         DecodeMatchers(n * 10 + parsed, acc)
 
                     case _ =>
-                        println("Failure")
                         val repetitions = if (n == 0) 1 else n
                         DecodeMatchers(0, d.decode(current,repetitions))
                 }
