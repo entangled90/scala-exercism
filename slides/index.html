@@ -1,0 +1,322 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown>
+					<script type="text/template">
+						## Workshop Agenda
+
+						- Recap 
+							- **functions** vs **methods**
+							- **higher order functions** for collections
+						
+						
+						- Something you _may_ have missed
+							- for comprehensions translation
+							- generalization to other types (**classes**)
+							- let's get our hands dirty
+					</script>					
+				</section>
+				<section data-markdown>
+					<script type='text/template'>
+					## RECAP
+					</script>
+				</section>
+		<section class='content' data-markdown>
+					<script type='text/template'>
+						# PROGRAMMING 
+						# = 
+						# DATA + BEHAVIOUR
+					</script>
+				</section>
+
+				<section class='content' data-markdown>
+					<script type='text/template'>
+						## Object Oriented Programming
+						- Data => Classes
+						- Behaviour => Classes
+					</script>
+				</section>
+
+				<section class='content' data-markdown>
+					<script type='text/template'>
+						## Functional Programming:
+						- Data => Structs with labels (*case classes*)
+						- Behaviour => functions 
+
+					</script>
+				</section>
+
+				<section class='content' data-markdown>
+					<script type="text/template">
+					### Functions
+
+					- objects extending Function*N*[A,B1,...,BN] trait
+					- their **apply** method is the function itself
+					- various **literals** due to syntactic sugar
+					- methods can be **converted** to function objects (by the compiler mostly)
+					</script>
+				</section>
+				<section class='content' data-markdown>
+					<script type='text/template'>
+						### Higher order functions
+						- functions/methods that either accepts or return a function
+						- everywhere in **FP** & scala standard library
+						- abstraction over functionalities
+						- declarative programming
+						- separation of concerns
+						
+					</script>
+				</section>	
+
+				<section class='content' data-markdown>
+					<script type='text/template'>
+						### Higher order functions 
+						
+							List(1,2,3,4).filter( _ > 1 )
+						Instead of 
+
+
+							interface Filterable<T> {
+								Boolean filter(el : T) 
+							}
+							myFilterableUsedOnlyHere = new Filterable<Int> {
+								# There isn't any variable, no DATA
+								Boolean filter(el : Int) = el > 1
+							}
+							List(1,2,3).filter(myFilterableUsedOnlyHere)
+					
+					</script>
+				</section>			
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							## Map 
+							- defined for types with (at least) a type parameter: List[User], Option[Account]
+							- you get to manipulate the data in the container:
+									final case class List[A](head : A, tail : List[A]) {
+										def map[A](f : A => B) : List[B] = ....
+									}
+							- polymorphic: you have the power you need
+						</script>
+					</section>
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							## FlatMap
+							- more powerful than map 
+							- typically you can define map from flatmap but the converse is not true
+									final case class List[A](head : A, tail : List[A]) {
+										def flatMap[A](f : A => List[B]) : List[B] = ....
+									}
+									
+							- it makes for comprehensions possible
+						</script>
+					</section>
+
+		
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							## Something you 
+							## _may_ 
+							## have missed
+						</script>
+					</section>
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							## For comprehensions
+							- just nested call of **FLATMAP**s and a *single* **MAP**
+								
+									for {
+										i <- 1 to n 
+										j <- 1 to i 
+										k <- 1 to j 
+									} yield i*j*k
+						
+						</script>
+					</section>
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							## For comprehensions
+							is just 
+								
+								(1 to n).flatMap{i => 
+									(1 to i).flatMap{ j => 
+										(1 to j).map{ k => i * j * k}
+									}
+								}
+						</script>
+					</section>
+
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							## Generalizations
+							- Higher order functions _can_ be intuitive for collections (?!?)
+							- For other types can _become_ intuitive from the right perspective
+							</script>
+					</section>
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							## Generalizations
+
+							How could you transform datas which _may_ be missing 
+							or a computation that _may_ fail?
+
+						</script>
+					</section>
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							#### If you think about it
+							
+							## there are not many ways to do it
+
+						</script>
+					</section>
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							## Mapping Options 
+								# nullable value
+								val previousComputation : Int = ...
+
+								val result = Option(previousComputation).map(x => f(x))
+
+								# Equivalent with Javaish code 
+								var result = null 
+								if ( previousComputation != null){
+									result = f(init)
+								}
+				
+						</script>
+					</section>
+				
+					<section class='content' data-markdown>
+						<script type='text/template'>
+						## exercise
+						define a (sensible) map method for Handling failures
+						</script>
+					</section>
+
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							## Map is useful but the signature is limiting					
+						</script>
+					</section>
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							
+							 What if i had to perform 
+
+							 ###### another **unsafe** operation 
+							or return
+
+							###### another **nullable** value?
+						</script>
+					</section>
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							
+							Let's try to define it for options
+
+							It should have this signature
+
+								def flatMap[B]( f : A => Option[B]) : Option[B] = ???						
+
+						</script>
+					</section>
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							If we use map instead of this we would end up with:
+
+								val v : Option[Option[Int] = Option(1).map( x => Option(x))
+							
+							But *Option[Option[Int]]* doesn't make sense.
+
+							We have 2 states:
+							- there is a value (Some)
+							- there's no value (None)
+
+						</script>
+					</section>
+
+
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							Option[Option[T]] has 3 states : 
+							- Some(Some(value)) -> We have a value!
+							- Some(None) -> no value 
+							- None -> no value
+
+							We need to squash these 2 cases into one.
+							
+							##### exercise: 
+							Define the method flatMap 
+							#### using the map method
+
+						</script>
+					</section>
+				
+					<section class='content' data-markdown>
+						<script type='text/template'>
+							Ok let's be serious, define flatMap without using map.
+							
+							#### exercise: 
+							Define map for Try[T] using 
+							#### flatMap
+
+						</script>
+					</section>
+
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>

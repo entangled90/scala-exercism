@@ -1,6 +1,6 @@
 scalaVersion := "2.12.1"
 
-val wrongDirs = Set("project","target","default")
+val wrongDirs = Set("project","target","default","slides")
 
 def isModuleDir(file : File) : Boolean = {
         file.isDirectory && !file.isHidden && !wrongDirs(file.getName)
